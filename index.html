@@ -26,6 +26,13 @@
       --wrong-bg: #fee2e2;
       --wrong-border: #dc2626;
       --wrong-text: #7f1d1d;
+      --streak-bg: #ffedd5;
+      --streak-border: #f97316;
+      --streak-text: #9a3412;
+      --record-bg: #fef3c7;
+      --record-border: #f59e0b;
+      --record-text: #92400e;
+      --timer-warn: #ef4444;
       --shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.1);
       --track-bg: #e2e8f0;
     }
@@ -51,6 +58,13 @@
         --wrong-bg: rgba(220, 38, 38, 0.22);
         --wrong-border: #ef4444;
         --wrong-text: #fecaca;
+        --streak-bg: rgba(249, 115, 22, 0.22);
+        --streak-border: #fb923c;
+        --streak-text: #fed7aa;
+        --record-bg: rgba(245, 158, 11, 0.22);
+        --record-border: #fbbf24;
+        --record-text: #fde68a;
+        --timer-warn: #f87171;
         --shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.55);
         --track-bg: #1e293b;
       }
@@ -92,8 +106,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
-      gap: 12px;
+      margin-bottom: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .brand {
@@ -105,18 +120,120 @@
       letter-spacing: -0.02em;
     }
 
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .score-pill,
+    .best-pill,
+    .streak-pill {
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      transition: transform 0.25s ease;
+      white-space: nowrap;
+    }
+
     .score-pill {
       background: var(--accent-soft);
       color: var(--accent);
-      font-weight: 700;
-      font-size: 0.875rem;
-      padding: 5px 12px;
-      border-radius: 999px;
-      transition: transform 0.25s ease;
+    }
+
+    .best-pill {
+      background: var(--option-bg);
+      border: 1px solid var(--option-border);
+      color: var(--text-muted);
+    }
+
+    .streak-pill {
+      display: none;
+      background: var(--streak-bg);
+      border: 1px solid var(--streak-border);
+      color: var(--streak-text);
+    }
+
+    .streak-pill.show {
+      display: inline-flex;
+      align-items: center;
+      animation: scorePop 0.4s ease;
     }
 
     .score-pill.bump {
       animation: scorePop 0.4s ease;
+    }
+
+    .quiz-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .timer-toggle-btn {
+      background: var(--option-bg);
+      border: 1px solid var(--option-border);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .timer-toggle-btn[aria-pressed="true"] {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .timer-status {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .timer-status.show {
+      display: inline-flex;
+    }
+
+    .timer-status.urgent {
+      color: var(--timer-warn);
+    }
+
+    .timer-track {
+      display: none;
+      width: 100%;
+      height: 5px;
+      background: var(--track-bg);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .timer-track.show {
+      display: block;
+    }
+
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width 0.25s linear, background-color 0.25s ease;
+    }
+
+    .timer-bar.urgent {
+      background: var(--timer-warn);
     }
 
     .progress-meta {
@@ -185,7 +302,9 @@
 
     .option-btn:focus-visible,
     .next-btn:focus-visible,
-    .restart-btn:focus-visible {
+    .restart-btn:focus-visible,
+    .timer-toggle-btn:focus-visible,
+    .review-toggle-btn:focus-visible {
       outline: 3px solid var(--accent);
       outline-offset: 2px;
     }
@@ -301,6 +420,123 @@
       margin-bottom: 20px;
     }
 
+    .new-record-badge {
+      display: none;
+      background: var(--record-bg);
+      border: 1px solid var(--record-border);
+      color: var(--record-text);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin: 4px auto 10px;
+      animation: scorePop 0.45s ease;
+    }
+
+    .new-record-badge.show {
+      display: inline-block;
+    }
+
+    .review-toggle-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid var(--option-border);
+      border-radius: 12px;
+      background: var(--option-bg);
+      color: var(--text-main);
+      font-size: 0.92rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .review-toggle-btn:hover {
+      background: var(--option-hover);
+      border-color: var(--accent);
+    }
+
+    .review-list {
+      display: none;
+      margin-top: 16px;
+      text-align: left;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .review-list.show {
+      display: flex;
+    }
+
+    .review-card {
+      background: var(--option-bg);
+      border: 1.5px solid var(--option-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.88rem;
+    }
+
+    .review-card.correct {
+      border-color: var(--correct-border);
+    }
+
+    .review-card.wrong {
+      border-color: var(--wrong-border);
+    }
+
+    .review-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-weight: 700;
+      gap: 8px;
+    }
+
+    .review-badge {
+      font-size: 0.78rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .review-badge.correct {
+      background: var(--correct-bg);
+      color: var(--correct-text);
+    }
+
+    .review-badge.wrong {
+      background: var(--wrong-bg);
+      color: var(--wrong-text);
+    }
+
+    .review-q {
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .review-ans {
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }
+
+    .review-ans strong {
+      color: var(--text-main);
+    }
+
+    .review-exp {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid var(--option-border);
+      color: var(--text-muted);
+      font-size: 0.84rem;
+    }
+
     @keyframes wrongShake {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-8px); }
@@ -335,10 +571,22 @@
   <main class="container">
     <header>
       <div class="brand">🚀 우주 탐험 퀴즈</div>
-      <div class="score-pill" id="scorePill">점수: <span id="scoreValue">0</span> / 10</div>
+      <div class="header-badges">
+        <div class="streak-pill" id="streakPill" aria-live="polite">🔥 <span id="streakValue">0</span>연속 정답!</div>
+        <div class="best-pill" id="bestPill">최고: <span id="bestScoreValue">0</span> / 10</div>
+        <div class="score-pill" id="scorePill">점수: <span id="scoreValue">0</span> / 10</div>
+      </div>
     </header>
 
     <section id="quizScreen">
+      <div class="quiz-controls">
+        <button class="timer-toggle-btn" id="timerToggleBtn" type="button" aria-pressed="false">⏱️ 15초 타이머: 끔</button>
+        <div class="timer-status" id="timerStatus">남은 시간: <span id="timerSeconds">15</span>초</div>
+      </div>
+      <div class="timer-track" id="timerTrack" aria-hidden="true">
+        <div class="timer-bar" id="timerBar"></div>
+      </div>
+
       <div class="progress-meta">
         <span id="questionCounter">문제 1 / 10</span>
         <span id="progressPercent">10%</span>
@@ -357,9 +605,12 @@
     <section class="results-screen" id="resultsScreen">
       <div class="emoji-reaction" id="resultEmoji">🧑‍🚀</div>
       <h2 class="results-title" id="resultTitle">탐사 완료!</h2>
+      <div class="new-record-badge" id="newRecordBadge">🎉 신기록 달성!</div>
       <div class="results-score" id="finalScore">0 / 10</div>
       <p class="results-desc" id="resultDesc"></p>
       <button class="restart-btn" id="restartBtn" type="button">다시 도전하기 🔄</button>
+      <button class="review-toggle-btn" id="reviewToggleBtn" type="button" aria-expanded="false">내 답안 및 해설 다시보기 📝</button>
+      <div class="review-list" id="reviewList"></div>
     </section>
   </main>
 
@@ -427,12 +678,31 @@
       }
     ];
 
+    const BEST_SCORE_KEY = "spaceQuizBestScore";
+    const TIMER_LIMIT = 15;
+
+    let activeQuestions = [];
     let currentIdx = 0;
     let score = 0;
+    let streak = 0;
+    let bestScore = loadBestScore();
+    let hasStoredBest = hasBestScoreInStorage();
     let answered = false;
+    let timerEnabled = false;
+    let timerInterval = null;
+    let remainingSeconds = TIMER_LIMIT;
+    let userAnswers = [];
 
     const scorePill = document.getElementById("scorePill");
     const scoreValue = document.getElementById("scoreValue");
+    const bestScoreValue = document.getElementById("bestScoreValue");
+    const streakPill = document.getElementById("streakPill");
+    const streakValue = document.getElementById("streakValue");
+    const timerToggleBtn = document.getElementById("timerToggleBtn");
+    const timerStatus = document.getElementById("timerStatus");
+    const timerSeconds = document.getElementById("timerSeconds");
+    const timerTrack = document.getElementById("timerTrack");
+    const timerBar = document.getElementById("timerBar");
     const questionCounter = document.getElementById("questionCounter");
     const progressPercent = document.getElementById("progressPercent");
     const progressBar = document.getElementById("progressBar");
@@ -444,17 +714,131 @@
     const resultsScreen = document.getElementById("resultsScreen");
     const resultEmoji = document.getElementById("resultEmoji");
     const resultTitle = document.getElementById("resultTitle");
+    const newRecordBadge = document.getElementById("newRecordBadge");
     const finalScore = document.getElementById("finalScore");
     const resultDesc = document.getElementById("resultDesc");
     const restartBtn = document.getElementById("restartBtn");
+    const reviewToggleBtn = document.getElementById("reviewToggleBtn");
+    const reviewList = document.getElementById("reviewList");
+
+    function hasBestScoreInStorage() {
+      try {
+        return localStorage.getItem(BEST_SCORE_KEY) !== null;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function loadBestScore() {
+      try {
+        const saved = localStorage.getItem(BEST_SCORE_KEY);
+        const parsed = saved !== null ? parseInt(saved, 10) : 0;
+        return Number.isNaN(parsed) ? 0 : parsed;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    function saveBestScore(newBest) {
+      bestScore = newBest;
+      hasStoredBest = true;
+      bestScoreValue.textContent = bestScore;
+      try {
+        localStorage.setItem(BEST_SCORE_KEY, String(newBest));
+      } catch (e) {
+        // Ignore storage errors in restricted environments
+      }
+    }
+
+    function shuffleArray(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = copy[i];
+        copy[i] = copy[j];
+        copy[j] = temp;
+      }
+      return copy;
+    }
+
+    function prepareShuffledQuestions() {
+      const shuffledQuestions = shuffleArray(questions);
+      activeQuestions = shuffledQuestions.map((item) => {
+        const correctOptionText = item.options[item.answer];
+        const shuffledOptions = shuffleArray(item.options);
+        const newAnswerIdx = shuffledOptions.indexOf(correctOptionText);
+        return {
+          q: item.q,
+          options: shuffledOptions,
+          answer: newAnswerIdx,
+          explanation: item.explanation
+        };
+      });
+    }
+
+    function updateStreakUI() {
+      streakValue.textContent = streak;
+      if (streak >= 2) {
+        streakPill.classList.remove("show");
+        void streakPill.offsetWidth;
+        streakPill.classList.add("show");
+      } else {
+        streakPill.classList.remove("show");
+      }
+    }
+
+    function stopQuestionTimer() {
+      if (timerInterval !== null) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function updateTimerUI() {
+      if (!timerEnabled) {
+        timerStatus.classList.remove("show", "urgent");
+        timerTrack.classList.remove("show");
+        timerBar.classList.remove("urgent");
+        return;
+      }
+      timerStatus.classList.add("show");
+      timerTrack.classList.add("show");
+      timerSeconds.textContent = remainingSeconds;
+      const pct = Math.max(0, (remainingSeconds / TIMER_LIMIT) * 100);
+      timerBar.style.width = `${pct}%`;
+
+      if (remainingSeconds <= 5) {
+        timerStatus.classList.add("urgent");
+        timerBar.classList.add("urgent");
+      } else {
+        timerStatus.classList.remove("urgent");
+        timerBar.classList.remove("urgent");
+      }
+    }
+
+    function startQuestionTimer() {
+      stopQuestionTimer();
+      remainingSeconds = TIMER_LIMIT;
+      updateTimerUI();
+      if (!timerEnabled || answered) return;
+
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        updateTimerUI();
+        if (remainingSeconds <= 0) {
+          stopQuestionTimer();
+          handleTimeout();
+        }
+      }, 1000);
+    }
 
     function renderQuestion(moveFocus = false) {
       answered = false;
-      const item = questions[currentIdx];
+      const item = activeQuestions[currentIdx];
       const step = currentIdx + 1;
-      const pct = Math.round((step / questions.length) * 100);
+      const pct = Math.round((step / activeQuestions.length) * 100);
 
-      questionCounter.textContent = `문제 ${step} / ${questions.length}`;
+      questionCounter.textContent = `문제 ${step} / ${activeQuestions.length}`;
       progressPercent.textContent = `${pct}%`;
       progressBar.style.width = `${pct}%`;
       questionText.textContent = item.q;
@@ -462,7 +846,7 @@
       feedbackBox.className = "feedback-box";
       feedbackBox.textContent = "";
       nextBtn.className = "next-btn";
-      nextBtn.textContent = step === questions.length ? "결과 보기 ✨" : "다음 문제 →";
+      nextBtn.textContent = step === activeQuestions.length ? "결과 보기 ✨" : "다음 문제 →";
 
       optionsList.innerHTML = "";
       item.options.forEach((optText, idx) => {
@@ -474,6 +858,8 @@
         optionsList.appendChild(btn);
       });
 
+      startQuestionTimer();
+
       if (moveFocus) {
         const firstOption = optionsList.querySelector(".option-btn");
         if (firstOption) firstOption.focus();
@@ -483,14 +869,16 @@
     function selectOption(selectedIdx, selectedBtn) {
       if (answered) return;
       answered = true;
+      stopQuestionTimer();
 
-      const item = questions[currentIdx];
+      const item = activeQuestions[currentIdx];
       const allBtns = optionsList.querySelectorAll(".option-btn");
       allBtns.forEach((btn) => (btn.disabled = true));
 
       const isCorrect = selectedIdx === item.answer;
       if (isCorrect) {
         score++;
+        streak++;
         scoreValue.textContent = score;
         scorePill.classList.remove("bump");
         void scorePill.offsetWidth;
@@ -501,6 +889,7 @@
         feedbackBox.className = "feedback-box show correct";
         feedbackBox.textContent = `정답입니다! ${item.explanation}`;
       } else {
+        streak = 0;
         selectedBtn.classList.add("wrong");
         selectedBtn.querySelector(".status-icon").textContent = "❌";
         const correctBtn = allBtns[item.answer];
@@ -511,14 +900,96 @@
         feedbackBox.textContent = `아쉽네요! ${item.explanation}`;
       }
 
+      updateStreakUI();
+
+      userAnswers.push({
+        questionNumber: currentIdx + 1,
+        q: item.q,
+        selectedText: item.options[selectedIdx],
+        correctText: item.options[item.answer],
+        isCorrect,
+        isTimeout: false,
+        explanation: item.explanation
+      });
+
       nextBtn.classList.add("show");
       nextBtn.focus();
     }
 
+    function handleTimeout() {
+      if (answered) return;
+      answered = true;
+
+      const item = activeQuestions[currentIdx];
+      const allBtns = optionsList.querySelectorAll(".option-btn");
+      allBtns.forEach((btn) => (btn.disabled = true));
+
+      streak = 0;
+      updateStreakUI();
+
+      const correctBtn = allBtns[item.answer];
+      if (correctBtn) {
+        correctBtn.classList.add("correct");
+        correctBtn.querySelector(".status-icon").textContent = "✅";
+      }
+
+      feedbackBox.className = "feedback-box show wrong";
+      feedbackBox.textContent = `시간 초과! 정답은 '${item.options[item.answer]}'입니다. ${item.explanation}`;
+
+      userAnswers.push({
+        questionNumber: currentIdx + 1,
+        q: item.q,
+        selectedText: "시간 초과 (미응답)",
+        correctText: item.options[item.answer],
+        isCorrect: false,
+        isTimeout: true,
+        explanation: item.explanation
+      });
+
+      nextBtn.classList.add("show");
+      nextBtn.focus();
+    }
+
+    function renderReviewNotes() {
+      reviewList.innerHTML = "";
+      userAnswers.forEach((entry) => {
+        const card = document.createElement("div");
+        card.className = `review-card ${entry.isCorrect ? "correct" : "wrong"}`;
+
+        const statusLabel = entry.isCorrect ? "✅ 정답" : (entry.isTimeout ? "⏰ 시간 초과 (오답)" : "❌ 오답");
+        const correctLine = entry.isCorrect
+          ? ""
+          : `<div class="review-ans">실제 정답: <strong>${entry.correctText}</strong></div>`;
+
+        card.innerHTML = `
+          <div class="review-card-header">
+            <span>문제 ${entry.questionNumber}</span>
+            <span class="review-badge ${entry.isCorrect ? "correct" : "wrong"}">${statusLabel}</span>
+          </div>
+          <div class="review-q">${entry.q}</div>
+          <div class="review-ans">내 선택: <strong>${entry.selectedText}</strong></div>
+          ${correctLine}
+          <div class="review-exp">💡 ${entry.explanation}</div>
+        `;
+        reviewList.appendChild(card);
+      });
+    }
+
     function showResults() {
+      stopQuestionTimer();
       quizScreen.style.display = "none";
       resultsScreen.classList.add("show");
-      finalScore.textContent = `${score} / ${questions.length}점`;
+      finalScore.textContent = `${score} / ${activeQuestions.length}점`;
+
+      const isNewRecord = !hasStoredBest ? score > 0 : score > bestScore;
+      if (score > bestScore || !hasStoredBest) {
+        saveBestScore(Math.max(score, bestScore));
+      }
+      if (isNewRecord) {
+        newRecordBadge.classList.add("show");
+      } else {
+        newRecordBadge.classList.remove("show");
+      }
 
       if (score === 10) {
         resultEmoji.textContent = "🌌🏆";
@@ -538,11 +1009,34 @@
         resultDesc.textContent = "우주 여행의 첫걸음을 떼셨군요! 다시 도전하며 우주 지식을 넓혀보세요.";
       }
 
+      reviewList.classList.remove("show");
+      reviewToggleBtn.setAttribute("aria-expanded", "false");
+      reviewToggleBtn.textContent = "내 답안 및 해설 다시보기 📝";
+      renderReviewNotes();
+
       restartBtn.focus();
     }
 
+    timerToggleBtn.addEventListener("click", () => {
+      timerEnabled = !timerEnabled;
+      timerToggleBtn.setAttribute("aria-pressed", String(timerEnabled));
+      timerToggleBtn.textContent = timerEnabled ? "⏱️ 15초 타이머: 켬" : "⏱️ 15초 타이머: 끔";
+      if (timerEnabled && !answered && !resultsScreen.classList.contains("show")) {
+        startQuestionTimer();
+      } else {
+        stopQuestionTimer();
+        updateTimerUI();
+      }
+    });
+
+    reviewToggleBtn.addEventListener("click", () => {
+      const isShowing = reviewList.classList.toggle("show");
+      reviewToggleBtn.setAttribute("aria-expanded", String(isShowing));
+      reviewToggleBtn.textContent = isShowing ? "내 답안 및 해설 접기 ▲" : "내 답안 및 해설 다시보기 📝";
+    });
+
     nextBtn.addEventListener("click", () => {
-      if (currentIdx < questions.length - 1) {
+      if (currentIdx < activeQuestions.length - 1) {
         currentIdx++;
         renderQuestion(true);
       } else {
@@ -551,11 +1045,17 @@
     });
 
     restartBtn.addEventListener("click", () => {
+      stopQuestionTimer();
       currentIdx = 0;
       score = 0;
+      streak = 0;
+      userAnswers = [];
       scoreValue.textContent = "0";
+      updateStreakUI();
+      newRecordBadge.classList.remove("show");
       resultsScreen.classList.remove("show");
       quizScreen.style.display = "block";
+      prepareShuffledQuestions();
       renderQuestion(true);
     });
 
@@ -583,6 +1083,8 @@
       }
     });
 
+    bestScoreValue.textContent = bestScore;
+    prepareShuffledQuestions();
     renderQuestion(true);
   </script>
 </body>
